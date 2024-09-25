@@ -6,6 +6,11 @@ using UnityEngine;
 
 public class PunManager : MonoBehaviourPunCallbacks
 {
+    void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
+
     public void GameStartButton()
     {
         PhotonNetwork.ConnectUsingSettings();
@@ -20,7 +25,7 @@ public class PunManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        print("참가 완료");
+        GameManager.Instance.SendUIManagerPlayersNum(PhotonNetwork.CurrentRoom.PlayerCount);
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
