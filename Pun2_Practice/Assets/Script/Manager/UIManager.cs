@@ -10,9 +10,10 @@ public class ObjectUI
     public string objectName;
     public GameObject[] object_TF;
 }
-public class UIManager : MonoBehaviour
+public class UIManager : MonoBehaviourPunCallbacks
 {
     public ObjectUI[] objectUI;
+    public PhotonView _PV;
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -34,7 +35,7 @@ public class UIManager : MonoBehaviour
         Screen.SetResolution(1280, 720, false);
     }
 
-    public void GameWaitScene(int playersNum)
+    public void GameWaitSceneTF()
     {
         for (int i = 0; i < objectUI[2].object_TF.Length; i++)
         {
@@ -44,7 +45,11 @@ public class UIManager : MonoBehaviour
         {
             objectUI[3].object_TF[i].SetActive(false);
         }
+    }
 
+    [PunRPC]
+    public void GameWaitScene(int playersNum)
+    {
         for(int i = 0; i < playersNum; i++)
         {
             if (!objectUI[4].object_TF[i].active)

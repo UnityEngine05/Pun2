@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
 
     public void SendUIManagerPlayersNum(int playersNum)
     {
-        _UIManager.GameWaitScene(playersNum);
+        _UIManager.GameWaitSceneTF();
+        _UIManager._PV.RPC("GameWaitScene", RpcTarget.All, playersNum);
     }
 }
