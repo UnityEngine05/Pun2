@@ -13,6 +13,8 @@ public class ObjectUI
 public class UIManager : MonoBehaviourPunCallbacks
 {
     public ObjectUI[] objectUI;
+    public GameObject MainCanvasUI;
+    public Transform[] PlayersObject;
     public PhotonView _PV;
     void Awake()
     {
@@ -52,10 +54,16 @@ public class UIManager : MonoBehaviourPunCallbacks
     {
         for(int i = 0; i < playersNum; i++)
         {
-            if (!objectUI[4].object_TF[i].active)
+            if (!objectUI[4].object_TF[i].activeSelf)
             {
                 objectUI[4].object_TF[i].SetActive(true);
             }
+        }
+
+        if (playersNum >= 2)
+        {
+            MainCanvasUI.SetActive(false);
+            PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity);
         }
     }
 }
