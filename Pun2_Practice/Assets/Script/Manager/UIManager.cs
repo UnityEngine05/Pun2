@@ -2,6 +2,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 [System.Serializable]
@@ -13,9 +14,13 @@ public class ObjectUI
 public class UIManager : MonoBehaviourPunCallbacks
 {
     public ObjectUI[] objectUI;
-    public GameObject MainCanvasUI;
-    public Transform[] PlayersObject;
+    public Sprite[] _PlayerSprite;
+    public Image _PlayerImage;
+    public GameObject _MainCanvasUI, _PlayerUICanvas;
     public PhotonView _PV;
+    public Text _PlayerName;
+    
+
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -49,6 +54,11 @@ public class UIManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void PlayerImageSetting(int imageNum)
+    {
+        _PlayerImage.sprite = _PlayerSprite[imageNum];
+    }
+
     [PunRPC]
     public void GameWaitScene(int playersNum)
     {
@@ -62,8 +72,18 @@ public class UIManager : MonoBehaviourPunCallbacks
 
         if (playersNum >= 2)
         {
-            MainCanvasUI.SetActive(false);
+            _MainCanvasUI.SetActive(false);
+            _PlayerUICanvas.SetActive(true);
             PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity);
         }
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+
     }
 }

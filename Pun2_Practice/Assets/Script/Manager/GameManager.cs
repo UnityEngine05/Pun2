@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour
     private static GameManager instance = null;
 
     public UIManager _UIManager;
-    public Player _Player;
     public NetworkManager _NetworkManager;
+    public ObjectFix _ObjectFix;
     public GameObject[] spawnPoint;
     void Awake()
     {
@@ -36,9 +36,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void Start()
+    {
+        
+    }
+
     public void SendUIManagerPlayersNum(int playersNum)
     {
         _UIManager.GameWaitSceneTF();
         _UIManager._PV.RPC("GameWaitScene", RpcTarget.AllViaServer, playersNum);
+    }
+
+    public void PlayerNameTextSetting(string playerName)
+    {
+        _UIManager._PlayerName.text = playerName;
     }
 }

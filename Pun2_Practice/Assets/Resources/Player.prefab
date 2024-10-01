@@ -116,7 +116,7 @@ Rigidbody2D:
     serializedVersion: 2
     m_Bits: 0
   m_Interpolate: 0
-  m_SleepingMode: 1
+  m_SleepingMode: 0
   m_CollisionDetection: 0
   m_Constraints: 4
 --- !u!70 &-312103908785244150
@@ -197,6 +197,7 @@ MonoBehaviour:
   - {fileID: -523896163558436213}
   - {fileID: 5815379234600978406}
   - {fileID: 5294086093002567214}
+  - {fileID: -3040933381926034928}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -259,6 +260,12 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: C3
+  - Type: 4
+    SynchronizeType: 1
+    Name: Walk
+  - Type: 4
+    SynchronizeType: 1
+    Name: SideWalk
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -276,10 +283,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _PlayerCharaters: 0
   _PlayerTeam: 0
+  key_1: 97
+  key_2: 115
   moveX: 0
   moveY: 0
   moveSpeed: 4
+  fixSpeed: 1
+  checkSpeed: 1
+  fixTimer: 0
+  checkTimer: 0
   foldOut: 1
-  playerNoMove: 0
+  playerNoMove: 1
+  fixOnOff: 0
   _PV: {fileID: 3550685717793069976}
   _Animator: {fileID: 4125500119254789265}
+  _ObjectFixCollision: {fileID: 0}

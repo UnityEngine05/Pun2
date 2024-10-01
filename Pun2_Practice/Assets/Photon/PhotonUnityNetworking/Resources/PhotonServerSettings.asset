@@ -40,6 +40,10 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - GameWaitScene
+  - CheckObject
+  - OtherPlayerValueinformation
+  - ObjectAttackAction
+  - ObjectFixAction
   DisableAutoOpenWizard: 1
-  ShowSettings: 0
+  ShowSettings: 1
   DevRegionSetOnce: 1
