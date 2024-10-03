@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ObjectFix : MonoBehaviourPunCallbacks, IPunObservable
+public class ObjectFix : MonoBehaviourPunCallbacks
 {
     public float maxHp, hp, timer;
     public bool broken, check, attack;
@@ -59,22 +59,23 @@ public class ObjectFix : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    [PunRPC]
+    public void ObjectHpRefresh()
     {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(hp);
-        }
-        else
-        {
-            hp = (float)stream.ReceiveNext();
-        }
+        check = true;
     }
 
     [PunRPC]
-    public void CheckObject()
+    public void ObjectHpAttack(float fixSpeed)
     {
-        check = true;
+        hp -= ( Time.deltaTime * fixSpeed ) / 4;
+        ObjectAttack();
+    }
+
+    [PunRPC]
+    public void ObjectHpHeal(float fixSpeed)
+    {
+        hp += ( Time.deltaTime * fixSpeed ) / 4;
     }
 
     public void ObjectAttack()

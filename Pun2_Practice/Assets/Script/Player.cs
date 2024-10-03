@@ -264,7 +264,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKey(key_1))
             {
-                _ObjectFixCollision.hp += Time.deltaTime * fixSpeed;
+                _ObjectFixCollision._PV.RPC("ObjectHpAttack", RpcTarget.AllViaServer, fixSpeed);
             }
             else if (Input.GetKey(key_2))
             {
@@ -278,8 +278,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             {
                 if(_ObjectFixCollision.check && _ObjectFixCollision.hp < _ObjectFixCollision.maxHp)
                 {
-                    _ObjectFixCollision.hp -= Time.deltaTime * fixSpeed;
-                    _ObjectFixCollision.ObjectAttack();
+                    _ObjectFixCollision._PV.RPC("ObjectHpHeal", RpcTarget.AllViaServer, fixSpeed);
                 }
             }
             else if (Input.GetKey(key_2))
