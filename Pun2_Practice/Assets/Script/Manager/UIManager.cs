@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviourPunCallbacks
 {
     public ObjectUI[] objectUI;
     public Sprite[] _PlayerSprite;
-    public Image _PlayerImage;
+    public Image _PlayerImage, _PlayerCoolTime;
     public GameObject _MainCanvasUI, _PlayerUICanvas;
     public PhotonView _PV;
     public Text _PlayerName;
@@ -70,7 +70,7 @@ public class UIManager : MonoBehaviourPunCallbacks
             }
         }
 
-        if (playersNum >= 2)
+        if (playersNum >= 4)
         {
             _MainCanvasUI.SetActive(false);
             _PlayerUICanvas.SetActive(true);

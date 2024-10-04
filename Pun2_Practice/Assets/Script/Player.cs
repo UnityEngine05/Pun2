@@ -19,10 +19,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [HideInInspector]
     public PlayerTeam _PlayerTeam;
     [HideInInspector]
-    public KeyCode key_1, key_2;
+    public KeyCode key_1, key_2, key_3;
 
     [HideInInspector]
-    public float moveX, moveY, moveSpeed, fixSpeed, checkSpeed, fixTimer, checkTimer;
+    public float moveX, moveY, moveSpeed,
+        fixSpeed, checkSpeed, coolTime,
+        fixTimer, checkTimer, maxCoolTime;
     [HideInInspector]
     public bool foldOut, playerNoMove, fixOnOff;
 
@@ -64,6 +66,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             PlayerMove();
             CameraMove();
             ObjectFix();
+            CoolTimeImageTimer();
         }
     }
     void PlayerMove()
@@ -84,6 +87,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             case PlayerCharaters.Á¤´Ùº½:
                 _Animator.SetTrigger("C1");
                 PlayerAnimator(1);
+                if(fixOnOff && Input.GetKeyDown(key_3))
+                {
+                    fixSpeed = 1.5f;
+                    coolTime = maxCoolTime;
+                }
                 break;
             case PlayerCharaters.ÀÓ½½Âù:
                 _Animator.SetTrigger("C2");
@@ -102,6 +110,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position,
                 new Vector3(transform.position.x, transform.position.y, -10), Time.deltaTime * 3);
+    }
+
+    void CoolTimeImageTimer()
+    {
+        GameManager.Instance._UIManager._PlayerCoolTime.fillAmount = coolTime / maxCoolTime;
+        if(coolTime > 0)
+        {
+            coolTime -= Time.deltaTime;
+        }
     }
 
     void PlayerAnimator(int side)
@@ -204,6 +221,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 _PlayerTeam = PlayerTeam.ÆÄ±«ÀÚ;
                 transform.position = GameManager.Instance.spawnPoint[0].transform.position;
                 moveSpeed = 6.5f;
+                fixSpeed = 1;
+                maxCoolTime = 0;
                 break;
             case 2001:
                 GameManager.Instance._UIManager.PlayerImageSetting(1);
@@ -212,6 +231,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 _PlayerTeam = PlayerTeam.»ýÁ¸ÀÚ;
                 transform.position = GameManager.Instance.spawnPoint[1].transform.position;
                 moveSpeed = 6.5f;
+                fixSpeed = 1.2f;
+                maxCoolTime = 30;
                 break;
             case 3001:
                 GameManager.Instance._UIManager.PlayerImageSetting(2);
@@ -220,6 +241,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 _PlayerTeam = PlayerTeam.»ýÁ¸ÀÚ;
                 transform.position = GameManager.Instance.spawnPoint[2].transform.position;
                 moveSpeed = 5;
+                fixSpeed = 1;
+                maxCoolTime = 40;
                 break;
             case 4001:
                 GameManager.Instance._UIManager.PlayerImageSetting(3);
@@ -228,6 +251,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 _PlayerTeam = PlayerTeam.»ýÁ¸ÀÚ;
                 transform.position = GameManager.Instance.spawnPoint[3].transform.position;
                 moveSpeed = 5f;
+                fixSpeed = 1;
+                maxCoolTime = 30;
                 break;
             default:
                 break;
@@ -241,8 +266,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
         checkTimer = 0;
         fixOnOff = true;
-        ObjectFix _ObjectFix_ = collision.gameObject.GetComponent<ObjectFix>();
-        _ObjectFixCollision = _ObjectFix_;
+        if(collision.gameObject.CompareTag("Object"))
+        {
+            ObjectFix _ObjectFix_ = collision.gameObject.GetComponent<ObjectFix>();
+            _ObjectFixCollision = _ObjectFix_;
+        }
     }
     void OnCollisionExit2D(Collision2D collision)
     {
@@ -254,6 +282,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (_PlayerCharaters == PlayerCharaters.±èÇý³ª)
         {
             _ObjectFixCollision._HpCanvas.SetActive(false);
+        }
+        else if(_PlayerCharaters == PlayerCharaters.Á¤´Ùº½)
+        {
+            fixSpeed = 1.2f;
         }
     }
     public void ObjectFix()

@@ -91,7 +91,7 @@ GameObject:
   - component: {fileID: 3961807402929633509}
   m_Layer: 0
   m_Name: Object
-  m_TagString: Untagged
+  m_TagString: Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -226,6 +226,7 @@ MonoBehaviour:
   timer: 0
   broken: 0
   check: 0
+  attack: 0
   _HpCanvas: {fileID: 8983266637911837595}
   _Hp: {fileID: 3255887967429861065}
   _PV: {fileID: 3961807402929633509}
