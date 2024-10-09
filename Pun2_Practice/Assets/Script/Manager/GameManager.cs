@@ -9,19 +9,23 @@ public class GameManager : MonoBehaviour
 
     public UIManager _UIManager;
     public NetworkManager _NetworkManager;
-    public ObjectFix _ObjectFix;
     public GameObject[] spawnPoint;
+
+    public int objectBrokenNum;
     void Awake()
     {
         if (null == instance)
         {
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            //DontDestroyOnLoad(this.gameObject);
         }
         else
         {
             Destroy(this.gameObject);
         }
+
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
     }
 
     public static GameManager Instance
@@ -38,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
-        
+        objectBrokenNum = 0;
     }
 
     public void SendUIManagerPlayersNum(int playersNum)

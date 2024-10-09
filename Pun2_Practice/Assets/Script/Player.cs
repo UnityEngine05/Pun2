@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.UI;
 public enum PlayerCharaters
 {
     ±èÇý³ª,
@@ -22,7 +23,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public KeyCode key_1, key_2, key_3;
 
     [HideInInspector]
-    public float moveX, moveY, moveSpeed,
+    public float moveX, moveY, moveSpeed, playerNoMoveTimer, stunSecond,
         fixSpeed, checkSpeed, coolTime,
         fixTimer, checkTimer, maxCoolTime;
     [HideInInspector]
@@ -31,6 +32,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public PhotonView _PV;
     public Animator _Animator;
     public ObjectFix _ObjectFixCollision;
+
+    public GameObject _FixCanvas;
+    public Image _FixGauge;
 
     // Start is called before the first frame update
     void Awake()
@@ -43,8 +47,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     void Start()
     {
         PlayerSelect();
-        OtherPlayerValueinformation();
-        
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -52,10 +54,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if(stream.IsWriting)
         {
             stream.SendNext(_PlayerCharaters);
+            stream.SendNext(_PlayerTeam);
         }
         else
         {
             _PlayerCharaters = (PlayerCharaters)stream.ReceiveNext();
+            _PlayerTeam = (PlayerTeam)stream.ReceiveNext();
         }
     }
 
@@ -67,6 +71,27 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             CameraMove();
             ObjectFix();
             CoolTimeImageTimer();
+
+            if (playerNoMove)
+            {
+                playerNoMoveTimer += Time.deltaTime;
+                if (playerNoMoveTimer >= 3)
+                {
+                    playerNoMove = false;
+                    playerNoMoveTimer = 0;
+                }
+            }
+
+            if (stunSecond > 0)
+            {
+                stunSecond -= Time.deltaTime;
+            }
+
+            if(GameManager.Instance.objectBrokenNum >= 1)
+            {
+                playerNoMove = true;
+            }
+
         }
     }
     void PlayerMove()
@@ -87,7 +112,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             case PlayerCharaters.Á¤´Ùº½:
                 _Animator.SetTrigger("C1");
                 PlayerAnimator(1);
-                if(fixOnOff && Input.GetKeyDown(key_3))
+                if (fixOnOff && Input.GetKeyDown(key_3) && coolTime <= 0)
                 {
                     fixSpeed = 1.5f;
                     coolTime = maxCoolTime;
@@ -115,7 +140,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     void CoolTimeImageTimer()
     {
         GameManager.Instance._UIManager._PlayerCoolTime.fillAmount = coolTime / maxCoolTime;
-        if(coolTime > 0)
+        if (coolTime > 0)
         {
             coolTime -= Time.deltaTime;
         }
@@ -175,34 +200,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         _Animator.SetBool("SideWalk", true);
         transform.localScale = new Vector3(scale, 1, 1);
-    }
-
-
-    public void OtherPlayerValueinformation()
-    {
-        switch (_PlayerCharaters)
+        if(scale < 0)
         {
-            case PlayerCharaters.±èÇý³ª:
-                _PlayerCharaters = PlayerCharaters.±èÇý³ª;
-                _PlayerTeam = PlayerTeam.ÆÄ±«ÀÚ;
-                break;
-            case PlayerCharaters.Á¤´Ùº½:
-                _PlayerCharaters = PlayerCharaters.Á¤´Ùº½;
-                _PlayerTeam = PlayerTeam.»ýÁ¸ÀÚ;
-                break;
-            case PlayerCharaters.ÀÓ½½Âù:
-                _PlayerCharaters = PlayerCharaters.ÀÓ½½Âù;
-                _PlayerTeam = PlayerTeam.»ýÁ¸ÀÚ;
-                break;
-            case PlayerCharaters.°­ÇÑ¿ï:
-                _PlayerCharaters = PlayerCharaters.°­ÇÑ¿ï;
-                _PlayerTeam = PlayerTeam.»ýÁ¸ÀÚ;
-                break;
-            default:
-                break;
+            _FixGauge.rectTransform.localScale = new Vector3(-1, 1, 1);
+        }
+        else
+        {
+            _FixGauge.rectTransform.localScale = new Vector3(1, 1, 1);
         }
     }
-
 
     public void PlayerSelect()
     {
@@ -210,9 +216,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
         playerNoMove = false;
         Camera.main.transform.position = transform.position;
-        
+        playerNoMoveTimer = 0;
+        _FixCanvas.SetActive(false);
 
-        switch(_PV.ViewID)
+
+        switch (_PV.ViewID)
         {
             case 1001:
                 GameManager.Instance._UIManager.PlayerImageSetting(0);
@@ -264,26 +272,60 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (!_PV.IsMine) return;
 
-        checkTimer = 0;
-        fixOnOff = true;
-        if(collision.gameObject.CompareTag("Object"))
+
+        
+        if (collision.gameObject.CompareTag("Object"))
         {
+            checkTimer = 0;
+            fixOnOff = true;
             ObjectFix _ObjectFix_ = collision.gameObject.GetComponent<ObjectFix>();
             _ObjectFixCollision = _ObjectFix_;
         }
+
+        _PV.RPC("PlayerStun", RpcTarget.AllViaServer, null);
+        if (_PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï && coolTime <= 0)
+        {
+            Player _CrazyPlayer = collision.gameObject.GetComponent<Player>();
+            if (_CrazyPlayer._PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ)
+            {
+                coolTime = maxCoolTime;
+            }
+            else
+            {
+
+            }
+        }
     }
+
+
+    [PunRPC]
+    public void PlayerStun()
+    {
+        if (_PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ && stunSecond <= 0)
+        {
+            playerNoMoveTimer = 0;
+            playerNoMove = true;
+            stunSecond = 30;
+        }
+    }
+
     void OnCollisionExit2D(Collision2D collision)
     {
         if (!_PV.IsMine) return;
 
-        fixOnOff = false;
-        _ObjectFixCollision.attack = false;
+        _FixCanvas.SetActive(false);
+        if (collision.gameObject.CompareTag("Object"))
+        {
+            fixOnOff = false;
+            _ObjectFixCollision.attack = false;
+        }
+            
 
-        if (_PlayerCharaters == PlayerCharaters.±èÇý³ª)
+        if (_PlayerCharaters == PlayerCharaters.±èÇý³ª && collision.gameObject.CompareTag("Object"))
         {
             _ObjectFixCollision._HpCanvas.SetActive(false);
         }
-        else if(_PlayerCharaters == PlayerCharaters.Á¤´Ùº½)
+        else if (_PlayerCharaters == PlayerCharaters.Á¤´Ùº½)
         {
             fixSpeed = 1.2f;
         }
@@ -315,10 +357,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             }
             else if (Input.GetKey(key_2))
             {
+                _FixCanvas.SetActive(true);
                 checkTimer += Time.deltaTime * checkSpeed;
+                _FixGauge.fillAmount = checkTimer / 2;
                 if (checkTimer >= 2)
                 {
-                    _ObjectFixCollision._PV.RPC("CheckObject", RpcTarget.AllViaServer);
+                    _ObjectFixCollision._PV.RPC("ObjectHpRefresh", RpcTarget.AllViaServer);
+                    _FixCanvas.SetActive(false);
                 }
             }
         }

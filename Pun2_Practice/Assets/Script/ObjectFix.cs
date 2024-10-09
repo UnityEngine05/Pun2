@@ -27,15 +27,22 @@ public class ObjectFix : MonoBehaviourPunCallbacks
     void LateUpdate()
     {
         _Hp.fillAmount = hp / maxHp;
-        if(!attack) _HpCanvas.SetActive(false);
 
         if (hp <= 0)
         {
+            if (!broken)
+            {
+                GameManager.Instance.objectBrokenNum++;
+            }
             broken = true;
             hp = 0;
         }
-        else if (hp > 0)
+        else if (hp >= maxHp)
         {
+            if(broken)
+            {
+                GameManager.Instance.objectBrokenNum--;
+            }
             broken = false;
         }
 

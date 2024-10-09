@@ -8,7 +8,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 {
     void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
     }
 
     public void GameStartButton()

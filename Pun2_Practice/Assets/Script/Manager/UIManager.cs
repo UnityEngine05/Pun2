@@ -19,12 +19,35 @@ public class UIManager : MonoBehaviourPunCallbacks
     public GameObject _MainCanvasUI, _PlayerUICanvas;
     public PhotonView _PV;
     public Text _PlayerName;
+
+    public int screenWidth, screenHeight;
+    public bool screenAllSizeBool;
     
 
     void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
         StartSetting();
+    }
+
+    public void ScreenAllSize(bool allSize)
+    {
+        screenAllSizeBool = allSize;
+    }
+
+    public void ScreenSizeWidth(int width)
+    {
+        screenWidth = width;
+    }
+
+    public void ScreenSizeHeight(int height)
+    {
+        screenHeight = height;
+    }
+
+    public void ScreenSetting()
+    {
+        Screen.SetResolution(screenWidth, screenHeight, screenAllSizeBool);
     }
 
     public void StartSetting()
@@ -39,7 +62,11 @@ public class UIManager : MonoBehaviourPunCallbacks
             objectUI[1].object_TF[i].SetActive(false);
         }
 
-        Screen.SetResolution(1280, 720, false);
+
+        screenWidth = 1280;
+        screenHeight = 720;
+        screenAllSizeBool = false;
+        Screen.SetResolution(screenWidth, screenHeight, screenAllSizeBool);
     }
 
     public void GameWaitSceneTF()
@@ -70,7 +97,7 @@ public class UIManager : MonoBehaviourPunCallbacks
             }
         }
 
-        if (playersNum >= 4)
+        if (playersNum >= 2)
         {
             _MainCanvasUI.SetActive(false);
             _PlayerUICanvas.SetActive(true);
