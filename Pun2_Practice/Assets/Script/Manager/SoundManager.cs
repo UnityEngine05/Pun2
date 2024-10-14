@@ -19,6 +19,7 @@ public class SoundManager : MonoBehaviour
     {
         _BGMSlider.value = 1;
         _EffectSlider.value = 1;
+        BGMSoundPlay(0);
     }
 
 

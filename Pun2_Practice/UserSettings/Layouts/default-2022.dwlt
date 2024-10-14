@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 1357
   m_ShowMode: 4
-  m_Title: Scene
+  m_Title: Console
   m_RootView: {fileID: 8}
   m_MinSize: {x: 875, y: 371}
   m_MaxSize: {x: 10000, y: 10000}
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 129
+  controlID: 67
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -477,7 +477,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Sound/Effects
+    - Assets/Sound/BGM
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -485,16 +485,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 96
   m_LastFolders:
-  - Assets/Sound/Effects
+  - Assets/Sound/BGM
   m_LastFoldersGridSize: 96
   m_LastProjectPath: C:\Users\USER\Desktop\unity\Pun2_Practice\Pun2_Practice
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: e0760000
-    m_LastClickedID: 30432
-    m_ExpandedIDs: 00000000747500007675000078750000
+    m_SelectedIDs: 36770000
+    m_LastClickedID: 30518
+    m_ExpandedIDs: 00000000787500007a7500007c7500003277000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -522,7 +522,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000747500007675000078750000
+    m_ExpandedIDs: 00000000787500007a7500007c750000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -547,8 +547,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 50d9ffff
-    m_LastClickedInstanceID: -9904
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300008a750000
     m_RenameOverlay:
@@ -664,7 +664,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 10fbffff
+      m_ExpandedIDs: 44d6ffffead6ffff38dbffff20e8ffffc6e8ffff14edffff10fbffff08720000bc730000f4920000a89300003c950000eca0000034a30000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1070,9 +1070,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -3.1028404, y: 4.7109995, z: -0.040979896}
+    m_Target: {x: -3.0911584, y: 0.73403585, z: 0.10056824}
     speed: 2
-    m_Value: {x: -3.0538678, y: 4.5851903, z: -0.03490897}
+    m_Value: {x: -3.0911584, y: 0.73403585, z: 0.10056824}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1122,9 +1122,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 14.098013
+    m_Target: 10.020691
     speed: 2
-    m_Value: 13.490921
+    m_Value: 10.020691
   m_Ortho:
     m_Target: 1
     speed: 2

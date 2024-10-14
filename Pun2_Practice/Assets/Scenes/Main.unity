@@ -2562,7 +2562,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -3933,11 +3933,7 @@ MonoBehaviour:
   _SoundClip:
     _BGMClip:
     - {fileID: 8300000, guid: 412927b848b8d4948878f17f103cd7b9, type: 3}
-    - {fileID: 8300000, guid: 14dd07b76da5e674292b7305ce5904a7, type: 3}
     - {fileID: 8300000, guid: ef7c9115be5172c49906dd3a4155c7b1, type: 3}
-    - {fileID: 8300000, guid: 680d09361a9ee054d9c1464c96795fb4, type: 3}
-    - {fileID: 8300000, guid: 81ed59ad289f6c749ba3bcf8449d7b3a, type: 3}
-    - {fileID: 8300000, guid: 728c4b8f16e8bf64ca54ecfd03a2e453, type: 3}
     _EffectClip:
     - {fileID: 8300000, guid: 60c76933cda48594eaa4b951d19656e2, type: 3}
     - {fileID: 8300000, guid: 82d6d45a44d1a4b4699de816fe32de75, type: 3}

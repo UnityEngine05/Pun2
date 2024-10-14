@@ -87,7 +87,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 stunSecond -= Time.deltaTime;
             }
 
-            if(GameManager.Instance.objectBrokenNum >= 1)
+            if(GameManager.Instance.objectBrokenNum >= 4)
             {
                 playerNoMove = true;
             }

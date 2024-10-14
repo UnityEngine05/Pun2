@@ -33,6 +33,7 @@ public class ObjectFix : MonoBehaviourPunCallbacks
             if (!broken)
             {
                 GameManager.Instance.objectBrokenNum++;
+                _HpCanvas.SetActive(false);
             }
             broken = true;
             hp = 0;
@@ -42,6 +43,7 @@ public class ObjectFix : MonoBehaviourPunCallbacks
             if(broken)
             {
                 GameManager.Instance.objectBrokenNum--;
+                _HpCanvas.SetActive(false);
             }
             broken = false;
         }
@@ -75,14 +77,14 @@ public class ObjectFix : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ObjectHpAttack(float fixSpeed)
     {
-        hp -= ( Time.deltaTime * fixSpeed ) / 4;
+        hp -= ( Time.deltaTime * fixSpeed );
         ObjectAttack();
     }
 
     [PunRPC]
     public void ObjectHpHeal(float fixSpeed)
     {
-        hp += ( Time.deltaTime * fixSpeed ) / 4;
+        hp += ( Time.deltaTime * fixSpeed );
     }
 
     public void ObjectAttack()
