@@ -18,7 +18,7 @@ public class UIManager : MonoBehaviourPunCallbacks
     public Image _PlayerImage, _PlayerCoolTime;
     public GameObject _MainCanvasUI, _PlayerUICanvas;
     public PhotonView _PV;
-    public Text _PlayerName;
+    public Text _PlayerName, _Timer;
 
     public int screenWidth, screenHeight;
     public bool screenAllSizeBool;
@@ -97,7 +97,7 @@ public class UIManager : MonoBehaviourPunCallbacks
             }
         }
 
-        if (playersNum >= 1)
+        if (playersNum >= 2)
         {
             _MainCanvasUI.SetActive(false);
             _PlayerUICanvas.SetActive(true);
@@ -112,5 +112,10 @@ public class UIManager : MonoBehaviourPunCallbacks
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
 
+    }
+
+    public void GameTimer(float timer)
+    {
+        _Timer.text = string.Format("{0:N1}", timer);
     }
 }

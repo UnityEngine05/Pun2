@@ -292,6 +292,7 @@ MonoBehaviour:
   moveSpeed: 4
   playerNoMoveTimer: 0
   stunSecond: 0
+  gameTimer: 0
   fixSpeed: 1
   checkSpeed: 1
   coolTime: 0

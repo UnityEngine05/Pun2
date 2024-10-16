@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     public UIManager _UIManager;
     public NetworkManager _NetworkManager;
+    public SoundManager _SoundManager;
     public GameObject[] spawnPoint;
 
     public int objectBrokenNum;

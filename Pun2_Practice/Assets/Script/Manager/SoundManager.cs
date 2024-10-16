@@ -10,7 +10,7 @@ public class SoundClip
 }
 public class SoundManager : MonoBehaviour
 {
-    public AudioSource _BGMAudioSource, _EffectAudioSource;
+    public AudioSource _BGMAudioSource, _EffectAudioSource, _EffectAudioSource2;
     public Slider _BGMSlider, _EffectSlider;
 
     public SoundClip _SoundClip;
@@ -22,6 +22,14 @@ public class SoundManager : MonoBehaviour
         BGMSoundPlay(0);
     }
 
+    public void LateUpdate()
+    {
+        if(Input.GetMouseButtonDown(0))
+        {
+            EffectSoundPlay(6);
+        }
+    }
+
 
     public void BGMSoundVolumeSetting()
     {
@@ -31,6 +39,7 @@ public class SoundManager : MonoBehaviour
     public void EffectSoundVolumeSetting()
     {
         _EffectAudioSource.volume = _EffectSlider.value;
+        _EffectAudioSource2.volume = _EffectSlider.value;
     }
 
     public void BGMSoundPlay(int num)
@@ -42,6 +51,18 @@ public class SoundManager : MonoBehaviour
 
     public void EffectSoundPlay(int num)
     {
-        _BGMAudioSource.PlayOneShot(_SoundClip._EffectClip[num]);
+        _EffectAudioSource2.PlayOneShot(_SoundClip._EffectClip[num]);
+    }
+
+    public void EffectSoundPlayStop(bool playSound)
+    {
+        if(playSound)
+        {
+            _EffectAudioSource.Play();
+        }
+        else
+        {
+            _EffectAudioSource.Stop();
+        }
     }
 }

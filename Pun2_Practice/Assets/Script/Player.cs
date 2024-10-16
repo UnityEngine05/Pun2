@@ -23,7 +23,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public KeyCode key_1, key_2, key_3;
 
     [HideInInspector]
-    public float moveX, moveY, moveSpeed, playerNoMoveTimer, stunSecond,
+    public float moveX, moveY, moveSpeed, playerNoMoveTimer, stunSecond, gameTimer,
         fixSpeed, checkSpeed, coolTime,
         fixTimer, checkTimer, maxCoolTime;
     [HideInInspector]
@@ -47,6 +47,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     void Start()
     {
         PlayerSelect();
+        gameTimer = 600;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -67,6 +68,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if(_PV.IsMine)
         {
+            GameTimerSeconds();
             PlayerMove();
             CameraMove();
             ObjectFix();
@@ -82,6 +84,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 }
             }
 
+
             if (stunSecond > 0)
             {
                 stunSecond -= Time.deltaTime;
@@ -94,6 +97,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
         }
     }
+
+    public void GameTimerSeconds()
+    {
+        gameTimer -= Time.deltaTime;
+        GameManager.Instance._UIManager.GameTimer(gameTimer);
+        if (gameTimer <= 0)
+        {
+            playerNoMove = true;
+        }
+    }
     void PlayerMove()
     {
         if (playerNoMove) return;
@@ -103,6 +116,17 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
         transform.position = new Vector2(transform.position.x + moveX, transform.position.y + moveY);
 
+        if (moveX != 0 || moveY != 0)
+        {
+            if(!GameManager.Instance._SoundManager._EffectAudioSource.isPlaying)
+            {
+                GameManager.Instance._SoundManager.EffectSoundPlayStop(true);
+            }
+        }
+        else
+        {
+            GameManager.Instance._SoundManager.EffectSoundPlayStop(false);
+        }
 
         switch (_PlayerCharaters)
         {
@@ -238,7 +262,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 _PlayerCharaters = PlayerCharaters.Á¤´Ùº½;
                 _PlayerTeam = PlayerTeam.»ýÁ¸ÀÚ;
                 transform.position = GameManager.Instance.spawnPoint[1].transform.position;
-                moveSpeed = 6.5f;
+                moveSpeed = 5.5f;
                 fixSpeed = 1.2f;
                 maxCoolTime = 30;
                 break;
@@ -295,6 +319,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
             }
         }
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Player _Player_ = collision.gameObject.GetComponent<Player>();
+            if(_Player_._PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ)
+            {
+                playerNoMoveTimer = 0;
+                playerNoMove = true;
+            }
+        }
     }
 
 
@@ -339,6 +373,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             if (Input.GetKey(key_1))
             {
                 _ObjectFixCollision._PV.RPC("ObjectHpAttack", RpcTarget.AllViaServer, fixSpeed);
+                if(_ObjectFixCollision.hp <= 0)
+                {
+                    GameManager.Instance._SoundManager.EffectSoundPlay(3);
+                }
             }
             else if (Input.GetKey(key_2))
             {
@@ -353,6 +391,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 if(_ObjectFixCollision.check && _ObjectFixCollision.hp < _ObjectFixCollision.maxHp)
                 {
                     _ObjectFixCollision._PV.RPC("ObjectHpHeal", RpcTarget.AllViaServer, fixSpeed);
+                    if (_ObjectFixCollision.hp >= _ObjectFixCollision.maxHp)
+                    {
+                        GameManager.Instance._SoundManager.EffectSoundPlay(2);
+                    }
                 }
             }
             else if (Input.GetKey(key_2))
