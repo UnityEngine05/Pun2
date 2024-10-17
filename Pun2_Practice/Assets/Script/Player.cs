@@ -25,7 +25,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public KeyCode key_1, key_2, key_3;
 
     [HideInInspector]
-    public float moveX, moveY, moveSpeed, playerNoMoveTimer, stunSecond, gameTimer,
+    public float moveX, moveY, moveSpeed, playerNoMoveTimer, gameTimer,
         fixSpeed, checkSpeed, coolTime,
         fixTimer, checkTimer, maxCoolTime;
     [HideInInspector]
@@ -92,12 +92,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                     playerNoMove = false;
                     playerNoMoveTimer = 0;
                 }
-            }
-
-
-            if (stunSecond > 0)
-            {
-                stunSecond -= Time.deltaTime;
             }
 
             if(GameManager.Instance.objectBrokenNum >= 4)
@@ -331,46 +325,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             _ObjectFixCollision = _ObjectFix_;
         }
 
-        if(_PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï)
-        {
-            if(collision.gameObject.CompareTag("Player"))
-            {
-                _PV.RPC("PlayerStun", RpcTarget.AllViaServer, collision.gameObject.GetComponent<Player>());
-            }
-        }
-
         if (collision.gameObject.CompareTag("Player"))
         {
             Player _CrazyPlayer = collision.gameObject.GetComponent<Player>();
-            if (_PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï && coolTime <= 0)
+            if (_CrazyPlayer._PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ)
             {
-                if (_CrazyPlayer._PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ)
-                {
-                    coolTime = maxCoolTime;
-                }
-                else
-                {
-
-                }
+                playerNoMove = true;
             }
-
-            if (collision.gameObject.CompareTag("Player"))
-            {
-                if (_CrazyPlayer._PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ)
-                {
-                    playerNoMove = true;
-                }
-            }
-        }
-    }
-
-    [PunRPC]
-    public void PlayerStun(Player player)
-    {
-        if (_PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ && stunSecond <= 0 && player._PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï)
-        {
-            playerNoMove = true;
-            stunSecond = 30;
         }
     }
 
