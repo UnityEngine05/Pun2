@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
+
 public enum PlayerCharaters
 {
     ±èÇý³ª,
@@ -92,7 +93,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
             if(GameManager.Instance.objectBrokenNum >= 4)
             {
-                playerNoMove = true;
+                GameEndingFunction("Á¤½Å³ª°£ Ä£±¸\n½Â¸®!");
             }
 
         }
@@ -104,8 +105,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         GameManager.Instance._UIManager.GameTimer(gameTimer);
         if (gameTimer <= 0)
         {
-            playerNoMove = true;
+            GameEndingFunction("°íÄ¡´Â Ä£±¸\n½Â¸®!");
         }
+    }
+
+    void GameEndingFunction(string message)
+    {
+        playerNoMove = true;
+        GameManager.Instance._UIManager._GameEnding.SetActive(true);
+        GameManager.Instance._UIManager._GameEndingText.text = message;
     }
     void PlayerMove()
     {
@@ -175,6 +183,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (moveY < 0)
         {
             _Animator.SetBool("Walk", true);
+            _Animator.SetBool("BackWalk", false);
             if (moveX > 0)
             {
                 RWalkAnimator(1 * side);
@@ -191,6 +200,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else if (moveY > 0)
         {
             _Animator.SetBool("BackWalk", true);
+            _Animator.SetBool("Walk", false);
             if (moveX < 0)
             {
                 RWalkAnimator(-1 * side);
@@ -306,7 +316,14 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             _ObjectFixCollision = _ObjectFix_;
         }
 
-        _PV.RPC("PlayerStun", RpcTarget.AllViaServer, null);
+        if(_PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï || _PlayerCharaters == PlayerCharaters.±èÇý³ª)
+        {
+            if(collision.gameObject.CompareTag("Player"))
+            {
+                _PV.RPC("PlayerStun", RpcTarget.AllViaServer, collision.gameObject.GetComponent<Player>());
+            }
+        }
+
         if (_PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï && coolTime <= 0)
         {
             Player _CrazyPlayer = collision.gameObject.GetComponent<Player>();
@@ -331,11 +348,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-
     [PunRPC]
-    public void PlayerStun()
+    public void PlayerStun(Player player)
     {
-        if (_PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ && stunSecond <= 0)
+        if (_PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ && stunSecond <= 0 && player._PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï)
         {
             playerNoMoveTimer = 0;
             playerNoMove = true;

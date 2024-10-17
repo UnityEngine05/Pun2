@@ -77,14 +77,14 @@ public class ObjectFix : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ObjectHpAttack(float fixSpeed)
     {
-        hp -= ( Time.deltaTime * fixSpeed ) / 2;
+        hp -= ( Time.deltaTime * fixSpeed * 0.1f );
         ObjectAttack();
     }
 
     [PunRPC]
     public void ObjectHpHeal(float fixSpeed)
     {
-        hp += ( Time.deltaTime * fixSpeed ) / 2;
+        hp += ( Time.deltaTime * fixSpeed * 0.1f ) / 3;
     }
 
     public void ObjectAttack()
