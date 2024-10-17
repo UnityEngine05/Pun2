@@ -33,22 +33,26 @@ public class ObjectFix : MonoBehaviourPunCallbacks
             if (!broken)
             {
                 GameManager.Instance.objectBrokenNum++;
-                _HpCanvas.SetActive(false);
             }
             broken = true;
             hp = 0;
         }
         else if (hp >= maxHp)
         {
-            if(broken)
+            if (broken)
             {
                 GameManager.Instance.objectBrokenNum--;
-                _HpCanvas.SetActive(false);
             }
             broken = false;
         }
 
         PlayerCheck();
+    }
+
+    [PunRPC]
+    public void HideObject()
+    {
+        _HpCanvas.SetActive(false);
     }
 
     public void PlayerCheck()
@@ -77,14 +81,14 @@ public class ObjectFix : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ObjectHpAttack(float fixSpeed)
     {
-        hp -= ( Time.deltaTime * fixSpeed * 0.1f );
+        hp -= ( Time.deltaTime * fixSpeed );
         ObjectAttack();
     }
 
     [PunRPC]
     public void ObjectHpHeal(float fixSpeed)
     {
-        hp += ( Time.deltaTime * fixSpeed * 0.1f ) / 3;
+        hp += ( Time.deltaTime * fixSpeed );
     }
 
     public void ObjectAttack()

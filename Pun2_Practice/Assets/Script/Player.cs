@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
+using System.IO;
 
 public enum PlayerCharaters
 {
@@ -29,6 +30,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         fixTimer, checkTimer, maxCoolTime;
     [HideInInspector]
     public bool foldOut, playerNoMove, fixOnOff;
+    public Vector3 playerPos, playerSize;
+    public Quaternion playerRot;
 
     public PhotonView _PV;
     public Animator _Animator;
@@ -55,11 +58,17 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if(stream.IsWriting)
         {
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+            stream.SendNext(transform.localScale);
             stream.SendNext(_PlayerCharaters);
             stream.SendNext(_PlayerTeam);
         }
         else
         {
+            playerPos = (Vector3)stream.ReceiveNext();
+            playerRot = (Quaternion)stream.ReceiveNext();
+            playerSize = (Vector3)stream.ReceiveNext();
             _PlayerCharaters = (PlayerCharaters)stream.ReceiveNext();
             _PlayerTeam = (PlayerTeam)stream.ReceiveNext();
         }
@@ -97,6 +106,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             }
 
         }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, playerPos, 10 * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, playerRot, 10 * Time.deltaTime);
+            transform.localScale = playerSize;
+        }
     }
 
     public void GameTimerSeconds()
@@ -109,7 +124,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    void GameEndingFunction(string message)
+
+    public void GameEndingFunction(string message)
     {
         playerNoMove = true;
         GameManager.Instance._UIManager._GameEnding.SetActive(true);
@@ -307,7 +323,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (!_PV.IsMine) return;
 
 
-        
         if (collision.gameObject.CompareTag("Object"))
         {
             checkTimer = 0;
@@ -316,7 +331,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             _ObjectFixCollision = _ObjectFix_;
         }
 
-        if(_PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï || _PlayerCharaters == PlayerCharaters.±èÇý³ª)
+        if(_PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï)
         {
             if(collision.gameObject.CompareTag("Player"))
             {
@@ -324,26 +339,27 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
 
-        if (_PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï && coolTime <= 0)
-        {
-            Player _CrazyPlayer = collision.gameObject.GetComponent<Player>();
-            if (_CrazyPlayer._PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ)
-            {
-                coolTime = maxCoolTime;
-            }
-            else
-            {
-
-            }
-        }
-
         if (collision.gameObject.CompareTag("Player"))
         {
-            Player _Player_ = collision.gameObject.GetComponent<Player>();
-            if(_Player_._PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ)
+            Player _CrazyPlayer = collision.gameObject.GetComponent<Player>();
+            if (_PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï && coolTime <= 0)
             {
-                playerNoMoveTimer = 0;
-                playerNoMove = true;
+                if (_CrazyPlayer._PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ)
+                {
+                    coolTime = maxCoolTime;
+                }
+                else
+                {
+
+                }
+            }
+
+            if (collision.gameObject.CompareTag("Player"))
+            {
+                if (_CrazyPlayer._PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ)
+                {
+                    playerNoMove = true;
+                }
             }
         }
     }
@@ -353,7 +369,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (_PlayerTeam == PlayerTeam.ÆÄ±«ÀÚ && stunSecond <= 0 && player._PlayerCharaters == PlayerCharaters.°­ÇÑ¿ï)
         {
-            playerNoMoveTimer = 0;
             playerNoMove = true;
             stunSecond = 30;
         }
@@ -392,6 +407,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 if(_ObjectFixCollision.hp <= 0)
                 {
                     GameManager.Instance._SoundManager.EffectSoundPlay(3);
+                    _ObjectFixCollision._PV.RPC("HideObject", RpcTarget.AllViaServer, null);
                 }
             }
             else if (Input.GetKey(key_2))

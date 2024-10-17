@@ -14,13 +14,12 @@ GameObject:
   - component: {fileID: -312103908785244150}
   - component: {fileID: 4125500119254789265}
   - component: {fileID: 3550685717793069976}
-  - component: {fileID: -523896163558436213}
   - component: {fileID: 5815379234600978406}
   - component: {fileID: 5294086093002567214}
   - component: {fileID: -3040933381926034928}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -195,29 +194,12 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: -523896163558436213}
   - {fileID: 5815379234600978406}
   - {fileID: 5294086093002567214}
   - {fileID: -3040933381926034928}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-523896163558436213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3012961380649166377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 1
-  m_UseLocal: 1
 --- !u!114 &5815379234600978406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,6 +284,9 @@ MonoBehaviour:
   foldOut: 1
   playerNoMove: 1
   fixOnOff: 0
+  playerPos: {x: 0, y: 0, z: 0}
+  playerSize: {x: 0, y: 0, z: 0}
+  playerRot: {x: 0, y: 0, z: 0, w: 0}
   _PV: {fileID: 3550685717793069976}
   _Animator: {fileID: 4125500119254789265}
   _ObjectFixCollision: {fileID: 0}
