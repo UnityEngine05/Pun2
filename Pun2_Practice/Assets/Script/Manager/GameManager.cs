@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
-        objectBrokenNum = 0;
+        objectBrokenNum = 14;
     }
 
     public void SendUIManagerPlayersNum(int playersNum)

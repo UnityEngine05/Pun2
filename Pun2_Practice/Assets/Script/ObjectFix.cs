@@ -12,15 +12,19 @@ public class ObjectFix : MonoBehaviourPunCallbacks
     public GameObject _HpCanvas;
     public Image _Hp;
     public PhotonView _PV;
+    public SpriteRenderer _SpriteRenderer;
     // Start is called before the first frame update
     void Start()
     {
         maxHp = 10;
-        hp = maxHp;
+        hp = 0;
         broken = false;
         check = false;
         _HpCanvas.SetActive(false);
         attack = false;
+        _SpriteRenderer = this.GetComponent<SpriteRenderer>();
+
+        this._SpriteRenderer.sortingOrder = -(int)transform.position.y;
     }
 
     // Update is called once per frame
@@ -32,7 +36,7 @@ public class ObjectFix : MonoBehaviourPunCallbacks
         {
             if (!broken)
             {
-                GameManager.Instance.objectBrokenNum++;
+                GameManager.Instance.objectBrokenNum--;
             }
             broken = true;
             hp = 0;
@@ -41,7 +45,7 @@ public class ObjectFix : MonoBehaviourPunCallbacks
         {
             if (broken)
             {
-                GameManager.Instance.objectBrokenNum--;
+                GameManager.Instance.objectBrokenNum++;
             }
             broken = false;
         }
@@ -81,14 +85,14 @@ public class ObjectFix : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ObjectHpAttack(float fixSpeed)
     {
-        hp -= ( Time.deltaTime * fixSpeed * 0.5f);
+        hp -= Time.deltaTime * fixSpeed;
         ObjectAttack();
     }
 
     [PunRPC]
     public void ObjectHpHeal(float fixSpeed)
     {
-        hp += ( Time.deltaTime * fixSpeed * 0.5f );
+        hp += Time.deltaTime * fixSpeed;
     }
 
     public void ObjectAttack()

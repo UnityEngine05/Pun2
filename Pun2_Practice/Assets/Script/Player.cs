@@ -15,6 +15,7 @@ public enum PlayerTeam
     파괴자,
     생존자
 }
+
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
     [HideInInspector]
@@ -23,19 +24,21 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public PlayerTeam _PlayerTeam;
     [HideInInspector]
     public KeyCode key_1, key_2, key_3;
-
     [HideInInspector]
     public float moveX, moveY, moveSpeed, playerNoMoveTimer, gameTimer,
         fixSpeed, checkSpeed, coolTime,
         fixTimer, checkTimer, maxCoolTime;
     [HideInInspector]
-    public bool foldOut, playerNoMove, fixOnOff;
+    public bool foldOut, playerNoMove, fixOnOff, gameEnding;
+    [HideInInspector]
     public Vector3 playerPos, playerSize;
+    [HideInInspector]
     public Quaternion playerRot;
 
     public PhotonView _PV;
     public Animator _Animator;
     public ObjectFix _ObjectFixCollision;
+    public SpriteRenderer _SpriteRenderer;
 
     public GameObject _FixCanvas;
     public Image _FixGauge;
@@ -46,12 +49,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (_PV.IsMine)
         {
             _ObjectFixCollision = null;
+            _SpriteRenderer = this.GetComponent<SpriteRenderer>();
         }
     }
     void Start()
     {
+        gameEnding = false;
         PlayerSelect();
         gameTimer = 600;
+        GameManager.Instance._SoundManager.BGMSoundPlay(1);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -76,9 +82,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
     void LateUpdate()
     {
-        if(_PV.IsMine)
+        if (gameEnding) return;
+
+        if (_PV.IsMine)
         {
-            GameTimerSeconds();
             PlayerMove();
             CameraMove();
             ObjectFix();
@@ -94,9 +101,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 }
             }
 
-            if(GameManager.Instance.objectBrokenNum >= 4)
+            if(GameManager.Instance.objectBrokenNum >= 2)
             {
-                GameEndingFunction("정신나간 친구\n승리!");
+                GameEndingFunction();
             }
 
         }
@@ -108,26 +115,18 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    public void GameTimerSeconds()
-    {
-        gameTimer -= Time.deltaTime;
-        GameManager.Instance._UIManager.GameTimer(gameTimer);
-        if (gameTimer <= 0)
-        {
-            GameEndingFunction("고치는 친구\n승리!");
-        }
-    }
 
-
-    public void GameEndingFunction(string message)
+    public void GameEndingFunction()
     {
-        playerNoMove = true;
-        GameManager.Instance._UIManager._GameEnding.SetActive(true);
-        GameManager.Instance._UIManager._GameEndingText.text = message;
+        GameManager.Instance._UIManager.UIManagerCoroutine();
+        gameEnding = true;
     }
     void PlayerMove()
     {
         if (playerNoMove) return;
+
+
+        this._SpriteRenderer.sortingOrder = -(int)transform.position.y;
 
         moveX = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
         moveY = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
@@ -158,6 +157,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     fixSpeed = 1.5f;
                     coolTime = maxCoolTime;
+                    GameManager.Instance._SoundManager.EffectSoundPlay(8);
                 }
                 break;
             case PlayerCharaters.임슬찬:
@@ -275,6 +275,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 moveSpeed = 6.5f;
                 fixSpeed = 1;
                 maxCoolTime = 0;
+                GameManager.Instance._UIManager._Skill_Image.enabled = false;
                 break;
             case 2001:
                 GameManager.Instance._UIManager.PlayerImageSetting(1);
@@ -284,7 +285,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 transform.position = GameManager.Instance.spawnPoint[1].transform.position;
                 moveSpeed = 5.5f;
                 fixSpeed = 1.2f;
-                maxCoolTime = 30;
+                maxCoolTime = 10;
+                GameManager.Instance._UIManager.SkillIconSetting(0);
                 break;
             case 3001:
                 GameManager.Instance._UIManager.PlayerImageSetting(2);
@@ -295,6 +297,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 moveSpeed = 5;
                 fixSpeed = 1;
                 maxCoolTime = 40;
+                GameManager.Instance._UIManager.SkillIconSetting(1);
                 break;
             case 4001:
                 GameManager.Instance._UIManager.PlayerImageSetting(3);
@@ -305,6 +308,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 moveSpeed = 5f;
                 fixSpeed = 1;
                 maxCoolTime = 30;
+                GameManager.Instance._UIManager.SkillIconSetting(2);
                 break;
             default:
                 break;
@@ -369,6 +373,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     GameManager.Instance._SoundManager.EffectSoundPlay(3);
                     _ObjectFixCollision._PV.RPC("HideObject", RpcTarget.AllViaServer, null);
+                    GameManager.Instance._UIManager.FixTextFunction("고장! 고장!");
                 }
             }
             else if (Input.GetKey(key_2))
@@ -387,6 +392,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                     if (_ObjectFixCollision.hp >= _ObjectFixCollision.maxHp)
                     {
                         GameManager.Instance._SoundManager.EffectSoundPlay(2);
+                        GameManager.Instance._UIManager.FixTextFunction("수리 완료");
                     }
                 }
             }
@@ -399,6 +405,14 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     _ObjectFixCollision._PV.RPC("ObjectHpRefresh", RpcTarget.AllViaServer);
                     _FixCanvas.SetActive(false);
+                    if (_ObjectFixCollision.broken)
+                    {
+                        GameManager.Instance._UIManager.FixTextFunction("수리가 필요하다.");
+                    }
+                    else
+                    {
+                        GameManager.Instance._UIManager.FixTextFunction("수리가 필요하지 않다.");
+                    }
                 }
             }
         }

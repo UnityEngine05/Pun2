@@ -1,8 +1,9 @@
 using Photon.Pun;
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 [System.Serializable]
@@ -14,12 +15,13 @@ public class ObjectUI
 public class UIManager : MonoBehaviourPunCallbacks
 {
     public ObjectUI[] objectUI;
-    public Sprite[] _PlayerSprite;
-    public Image _PlayerImage, _PlayerCoolTime;
-    public GameObject _MainCanvasUI, _PlayerUICanvas, _GameEnding;
+    public Sprite[] _PlayerSprite, _Skill_Icon, _GameEndingSprite;
+    public Image _PlayerImage, _PlayerCoolTime, _Skill_Image, _GameEndingImage;
+    public GameObject _MainCanvasUI, _PlayerUICanvas, _GameEnding, _FixTextImage;
     public PhotonView _PV;
-    public Text _PlayerName, _Timer, _GameEndingText;
+    public Text _PlayerName, _GameEndingText, _FixText;
 
+    public float fixTextHideTime;
     public int screenWidth, screenHeight;
     public bool screenAllSizeBool;
     
@@ -28,6 +30,25 @@ public class UIManager : MonoBehaviourPunCallbacks
     {
         //DontDestroyOnLoad(this.gameObject);
         StartSetting();
+    }
+
+    void LateUpdate()
+    {
+        if (_FixTextImage.activeSelf) 
+        {
+            fixTextHideTime += Time.deltaTime;
+            if(fixTextHideTime >= 3)
+            {
+                _FixTextImage.SetActive(false);
+            }
+        }
+    }
+
+    public void FixTextFunction(string text)
+    {
+        fixTextHideTime = 0;
+        _FixTextImage.SetActive(true);
+        _FixText.text = text;
     }
 
     public void ScreenAllSize(bool allSize)
@@ -105,6 +126,66 @@ public class UIManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void SkillIconSetting(int num)
+    {
+        _Skill_Image.sprite = _Skill_Icon[num];
+    }
+
+    IEnumerator GameEnding()
+    {
+        _GameEnding.SetActive(true);
+        _GameEndingImage.sprite = _GameEndingSprite[0];
+        yield return StartCoroutine(TextTyping("..헉..헉헉..."));
+        yield return StartCoroutine(TextTyping("하아........."));
+        _GameEndingImage.sprite = _GameEndingSprite[1];
+        yield return StartCoroutine(TextTyping("헉헉......"));
+        yield return StartCoroutine(TextTyping("....얼마나...더 가야하는거야..."));
+        yield return StartCoroutine(TextTyping("으아... 진짜 힘들어 죽겠네..."));
+        _GameEndingImage.sprite = _GameEndingSprite[2];
+        yield return StartCoroutine(TextTyping("허억...여기서...좀 더...."));
+        yield return StartCoroutine(TextTyping("산 속에... 있는 것 같은데...."));
+        yield return StartCoroutine(TextTyping("좀만 더 참자...애들아..."));
+        _GameEndingImage.sprite = _GameEndingSprite[3];
+        yield return StartCoroutine(TextTyping("저기 앞에 보이는 산..."));
+        yield return StartCoroutine(TextTyping("저기 맞지..?"));
+        yield return StartCoroutine(TextTyping("..어..! 저기 맞아! gps로는 분명 저기야...!"));
+        yield return StartCoroutine(TextTyping("gps로는 분명 저기야...!"));
+        _GameEndingImage.sprite = _GameEndingSprite[4];
+        yield return StartCoroutine(TextTyping("조금만 버텨 ??아..!"));
+        yield return StartCoroutine(TextTyping("곧 도착이야..! 허억...허억.."));
+        yield return StartCoroutine(TextTyping("여기 맞아..? 너무 길이 위험한데..!헉헉.."));
+        yield return StartCoroutine(TextTyping("발밑 조심해..!"));
+        _GameEndingImage.sprite = _GameEndingSprite[5];
+        yield return StartCoroutine(TextTyping("헉...헉."));
+        yield return StartCoroutine(TextTyping("드디어...."));
+        yield return StartCoroutine(TextTyping("....."));
+        yield return StartCoroutine(TextTyping("....."));
+        yield return StartCoroutine(TextTyping("도착했다!"));
+        GameManager.Instance._NetworkManager.LeaveRoom();
+        yield return new WaitForSeconds(1);
+        QuitGame();
+    }
+
+    IEnumerator TextTyping(string text)
+    {
+        _GameEndingText.text = "";
+
+        for (int i = 0; i < text.Length; i++)
+        {
+            _GameEndingText.text += text[i];
+            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return new WaitForSeconds(1);
+    }
+
+    [PunRPC]
+    public void UIManagerCoroutine()
+    {
+        StartCoroutine(GameEnding());
+    }
+
     public void QuitGame()
     {
         Application.Quit();
@@ -112,10 +193,5 @@ public class UIManager : MonoBehaviourPunCallbacks
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
 
-    }
-
-    public void GameTimer(float timer)
-    {
-        _Timer.text = string.Format("{0:N1}", timer);
     }
 }

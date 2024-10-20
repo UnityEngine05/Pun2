@@ -151,8 +151,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.175}
-  m_Size: {x: 0.45, y: 0.5}
+  m_Offset: {x: 0, y: -0.4}
+  m_Size: {x: 0.5, y: 0.75}
   m_Direction: 0
 --- !u!95 &4125500119254789265
 Animator:
@@ -273,7 +273,6 @@ MonoBehaviour:
   moveY: 0
   moveSpeed: 4
   playerNoMoveTimer: 0
-  stunSecond: 0
   gameTimer: 0
   fixSpeed: 1
   checkSpeed: 1
@@ -284,12 +283,14 @@ MonoBehaviour:
   foldOut: 1
   playerNoMove: 1
   fixOnOff: 0
+  gameEnding: 0
   playerPos: {x: 0, y: 0, z: 0}
   playerSize: {x: 0, y: 0, z: 0}
   playerRot: {x: 0, y: 0, z: 0, w: 0}
   _PV: {fileID: 3550685717793069976}
   _Animator: {fileID: 4125500119254789265}
   _ObjectFixCollision: {fileID: 0}
+  _SpriteRenderer: {fileID: 0}
   _FixCanvas: {fileID: 8213115343001941882}
   _FixGauge: {fileID: 1987293181937610028}
 --- !u!1 &5352639379246900556
@@ -427,7 +428,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 752317473
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &2844862991183054340
@@ -528,7 +529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9960785, g: 0.9803922, b: 0.3529412, a: 1}
+  m_Color: {r: 1, g: 0.3489437, b: 0.25, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

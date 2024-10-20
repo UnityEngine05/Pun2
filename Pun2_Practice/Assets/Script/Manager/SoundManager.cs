@@ -17,7 +17,7 @@ public class SoundManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _BGMSlider.value = 1;
+        _BGMSlider.value = 0.25f;
         _EffectSlider.value = 1;
         BGMSoundPlay(0);
     }
