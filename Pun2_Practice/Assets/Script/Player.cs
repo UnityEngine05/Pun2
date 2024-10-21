@@ -337,6 +337,29 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 playerNoMove = true;
             }
         }
+
+        if(collision.gameObject.CompareTag("Door"))
+        {
+            switch (collision.gameObject.name)
+            {
+                case "환기실문":
+                    transform.position = new Vector3(0.15f, 18, 0);
+                    break;
+                case "거실문":
+                    transform.position = new Vector3(0.5f, 2.25f, 0);
+                    break;
+                case "거실문_2":
+                    transform.position = new Vector3(-8.25f, -3.5f, 0);
+                    break;
+                case "부엌문":
+                    transform.position = new Vector3(-31, 0, 0);
+                    break;
+                default
+                    : break;
+            }
+            GameManager.Instance._SoundManager.EffectSoundPlay(1);
+            Camera.main.transform.position = transform.position;
+        }
     }
 
     void OnCollisionExit2D(Collision2D collision)

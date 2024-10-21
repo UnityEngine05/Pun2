@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using TMPro;
 
 [System.Serializable]
 public class ObjectUI
@@ -19,7 +19,7 @@ public class UIManager : MonoBehaviourPunCallbacks
     public Image _PlayerImage, _PlayerCoolTime, _Skill_Image, _GameEndingImage;
     public GameObject _MainCanvasUI, _PlayerUICanvas, _GameEnding, _FixTextImage;
     public PhotonView _PV;
-    public Text _PlayerName, _GameEndingText, _FixText;
+    public TMP_Text _PlayerName, _GameEndingText, _FixText;
 
     public float fixTextHideTime;
     public int screenWidth, screenHeight;
@@ -144,16 +144,17 @@ public class UIManager : MonoBehaviourPunCallbacks
         _GameEndingImage.sprite = _GameEndingSprite[2];
         yield return StartCoroutine(TextTyping("허억...여기서...좀 더...."));
         yield return StartCoroutine(TextTyping("산 속에... 있는 것 같은데...."));
-        yield return StartCoroutine(TextTyping("좀만 더 참자...애들아..."));
+        yield return StartCoroutine(TextTyping("좀만 더 참자...얘들아..."));
         _GameEndingImage.sprite = _GameEndingSprite[3];
         yield return StartCoroutine(TextTyping("저기 앞에 보이는 산..."));
         yield return StartCoroutine(TextTyping("저기 맞지..?"));
-        yield return StartCoroutine(TextTyping("..어..! 저기 맞아! gps로는 분명 저기야...!"));
-        yield return StartCoroutine(TextTyping("gps로는 분명 저기야...!"));
+        yield return StartCoroutine(TextTyping("..어..! 저기 맞아!"));
+        yield return StartCoroutine(TextTyping("GPS로는 분명 저기야...!"));
         _GameEndingImage.sprite = _GameEndingSprite[4];
         yield return StartCoroutine(TextTyping("조금만 버텨 ??아..!"));
         yield return StartCoroutine(TextTyping("곧 도착이야..! 허억...허억.."));
-        yield return StartCoroutine(TextTyping("여기 맞아..? 너무 길이 위험한데..!헉헉.."));
+        yield return StartCoroutine(TextTyping("여기 맞아..?"));
+        yield return StartCoroutine(TextTyping("너무 길이 위험한데..!헉헉.."));
         yield return StartCoroutine(TextTyping("발밑 조심해..!"));
         _GameEndingImage.sprite = _GameEndingSprite[5];
         yield return StartCoroutine(TextTyping("헉...헉."));

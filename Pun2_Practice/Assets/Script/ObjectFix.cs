@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class ObjectFix : MonoBehaviourPunCallbacks
 {
     public float maxHp, hp, timer;
-    public bool broken, check, attack;
+    public bool broken, check, attack, layer_;
     public GameObject _HpCanvas;
     public Image _Hp;
     public PhotonView _PV;
@@ -24,7 +24,9 @@ public class ObjectFix : MonoBehaviourPunCallbacks
         attack = false;
         _SpriteRenderer = this.GetComponent<SpriteRenderer>();
 
+        if (layer_) return;
         this._SpriteRenderer.sortingOrder = -(int)transform.position.y;
+        if(transform.position.y == 0) this._SpriteRenderer.sortingOrder = -(int)transform.position.y - 1;
     }
 
     // Update is called once per frame
