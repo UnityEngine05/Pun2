@@ -17,11 +17,13 @@ public class PlayerEditor : Editor
         EditorGUILayout.LabelField("Key_1", GUILayout.Width(60));
         EditorGUILayout.LabelField("Key_2", GUILayout.Width(60));
         EditorGUILayout.LabelField("Key_3", GUILayout.Width(60));
+        EditorGUILayout.LabelField("Key_4", GUILayout.Width(60));
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.BeginHorizontal();
         _Player.key_1 = (KeyCode)EditorGUILayout.EnumPopup(_Player.key_1, GUILayout.Width(60));
         _Player.key_2 = (KeyCode)EditorGUILayout.EnumPopup(_Player.key_2, GUILayout.Width(60));
         _Player.key_3 = (KeyCode)EditorGUILayout.EnumPopup(_Player.key_3, GUILayout.Width(60));
+        _Player.key_4 = (KeyCode)EditorGUILayout.EnumPopup(_Player.key_4, GUILayout.Width(60));
         EditorGUILayout.EndHorizontal();
 
         _Player.foldOut = EditorGUILayout.Foldout(_Player.foldOut, "플레이어 정보");

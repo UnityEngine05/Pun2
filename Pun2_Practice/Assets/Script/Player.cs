@@ -23,13 +23,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [HideInInspector]
     public PlayerTeam _PlayerTeam;
     [HideInInspector]
-    public KeyCode key_1, key_2, key_3;
+    public KeyCode key_1, key_2, key_3, key_4;
     [HideInInspector]
     public float moveX, moveY, moveSpeed, playerNoMoveTimer, gameTimer,
         fixSpeed, checkSpeed, coolTime,
-        fixTimer, checkTimer, maxCoolTime;
+        fixTimer, checkTimer, maxCoolTime, skipTimer;
     [HideInInspector]
-    public bool foldOut, playerNoMove, fixOnOff, gameEnding;
+    public bool foldOut, playerNoMove, fixOnOff, gameEnding, skipPlayerBool;
     [HideInInspector]
     public Vector3 playerPos, playerSize;
     [HideInInspector]
@@ -54,10 +54,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Start()
     {
-        gameEnding = false;
+        gameEnding = true;
+        skipPlayerBool = false;
+        skipTimer = 0;
         PlayerSelect();
         gameTimer = 600;
         GameManager.Instance._SoundManager.BGMSoundPlay(1);
+        if(_PV.IsMine)
+        {
+            GameManager.Instance._UIManager.UIManagerCoroutine("GameStart", this.GetComponent<Player>());
+        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -82,6 +88,35 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
     void LateUpdate()
     {
+        if(_PV.IsMine)
+        {
+            if (gameEnding && !skipPlayerBool)
+            {
+                if (skipTimer >= 3)
+                {
+                    skipPlayerBool = true;
+                    GameManager.Instance._UIManager._PV.RPC("SkipScene", RpcTarget.AllViaServer, null);
+                }
+            }
+
+            if(Input.GetKey(key_4))
+            {
+                skipTimer += Time.deltaTime;
+            }
+            if(Input.GetKeyUp(key_4))
+            {
+                skipTimer = 0;
+            }
+            GameManager.Instance._UIManager._SkipImage.fillAmount = skipTimer / 3;
+            if(GameManager.Instance._UIManager.skipPlayer == 2)
+            {
+                gameEnding = false;
+                playerNoMove = false;
+                GameManager.Instance._UIManager._PV.RPC("SkipScene", RpcTarget.AllViaServer, null);
+            }
+        }
+        
+
         if (gameEnding) return;
 
         if (_PV.IsMine)
@@ -103,7 +138,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
             if(GameManager.Instance.objectBrokenNum >= 2)
             {
-                GameEndingFunction();
+                GameManager.Instance._UIManager.UIManagerCoroutine("GameEnding", null);
+                gameEnding = true;
+                skipTimer = 0;
+                skipPlayerBool = false;
             }
 
         }
@@ -113,13 +151,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             transform.rotation = Quaternion.Lerp(transform.rotation, playerRot, 10 * Time.deltaTime);
             transform.localScale = playerSize;
         }
-    }
-
-
-    public void GameEndingFunction()
-    {
-        GameManager.Instance._UIManager.UIManagerCoroutine();
-        gameEnding = true;
     }
     void PlayerMove()
     {

@@ -18,7 +18,10 @@ public class SoundManager : MonoBehaviour
     void Start()
     {
         _BGMSlider.value = 0.25f;
-        _EffectSlider.value = 1;
+        _EffectSlider.value = 0.5f;
+        _BGMAudioSource.volume = _BGMSlider.value;
+        _EffectAudioSource.volume = _EffectSlider.value; ;
+        _EffectAudioSource2.volume = _EffectSlider.value; ;
         BGMSoundPlay(0);
     }
 

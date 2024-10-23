@@ -17,7 +17,6 @@ public class ObjectFix : MonoBehaviourPunCallbacks
     void Start()
     {
         maxHp = 10;
-        hp = 0;
         broken = false;
         check = false;
         _HpCanvas.SetActive(false);

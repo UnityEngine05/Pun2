@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Photon.Realtime;
 
 [System.Serializable]
 public class ObjectUI
@@ -15,21 +16,25 @@ public class ObjectUI
 public class UIManager : MonoBehaviourPunCallbacks
 {
     public ObjectUI[] objectUI;
-    public Sprite[] _PlayerSprite, _Skill_Icon, _GameEndingSprite;
-    public Image _PlayerImage, _PlayerCoolTime, _Skill_Image, _GameEndingImage;
-    public GameObject _MainCanvasUI, _PlayerUICanvas, _GameEnding, _FixTextImage;
+    public Sprite[] _PlayerSprite, _Skill_Icon, _GameEndingSprite, _GameStartSprite;
+    public Image _PlayerImage, _PlayerCoolTime, _Skill_Image, _GameEndingImage, _SkipImage;
+    public GameObject _MainCanvasUI, _PlayerUICanvas, _GameEnding, _FixTextImage,
+        skipPlayerNum, skipPlayerNum_2;
     public PhotonView _PV;
     public TMP_Text _PlayerName, _GameEndingText, _FixText;
 
     public float fixTextHideTime;
-    public int screenWidth, screenHeight;
-    public bool screenAllSizeBool;
+    public int screenWidth, screenHeight, skipPlayer;
+    public bool screenAllSizeBool, startGameStoryEnd, endingCoroutine;
     
 
     void Awake()
     {
         //DontDestroyOnLoad(this.gameObject);
         StartSetting();
+        startGameStoryEnd = false;
+        skipPlayer = 0;
+        endingCoroutine = false;
     }
 
     void LateUpdate()
@@ -131,8 +136,59 @@ public class UIManager : MonoBehaviourPunCallbacks
         _Skill_Image.sprite = _Skill_Icon[num];
     }
 
+    IEnumerator GameStart(Player player)
+    {
+        _GameEnding.SetActive(true);
+        player.gameEnding = true;
+        _GameEndingImage.sprite = _GameStartSprite[0];
+        yield return StartCoroutine(TextTyping("정다봄 : 어떻게 진정해야 하지?"));
+        yield return StartCoroutine(TextTyping("임슬찬 : 여기서 진정시킬 방법은 없는 것 같아"));
+        _GameEndingImage.sprite = _GameStartSprite[1];
+        yield return StartCoroutine(TextTyping("김혜나 : 으으..."));
+        yield return StartCoroutine(TextTyping("강한울 : 어라..?"));
+        yield return StartCoroutine(TextTyping("정다봄 : 어.. 괜찮아..?"));
+        yield return StartCoroutine(TextTyping("임슬찬 : 혹시 모르니 일단 조심해봐."));
+        _GameEndingImage.sprite = _GameStartSprite[2];
+        yield return StartCoroutine(TextTyping("김혜나 : 아...아.. 머리가.. 아파.."));
+        _GameEndingImage.sprite = _GameStartSprite[3];
+        yield return StartCoroutine(TextTyping("김혜나 : 무슨 일이 있었던거지..?"));
+        yield return StartCoroutine(TextTyping("임슬찬 : 괜찮아졌다! 다행이다"));
+        _GameEndingImage.sprite = _GameStartSprite[4];
+        yield return StartCoroutine(TextTyping("정다봄 : 으아아.. 정말 다행이다.."));
+        yield return StartCoroutine(TextTyping("강한울 : 진짜 다행이야...정말로.."));
+        _GameEndingImage.sprite = _GameStartSprite[5];
+        yield return StartCoroutine(TextTyping("김혜나 : 내...내가... 무슨 짓을....한거야..?"));
+        yield return StartCoroutine(TextTyping("임슬찬 : 신경쓰지마, 넌 나을 생각만 해"));
+        yield return StartCoroutine(TextTyping("강한울 : 괜찮아 괜찮아. 우리가 해결해줄게"));
+        yield return StartCoroutine(TextTyping("정다봄 : 일단 우리 자자"));
+        yield return StartCoroutine(TextTyping("김혜나 : 어..어...알았어"));
+        yield return StartCoroutine(TextTyping("임슬찬 : 자 다 자자!"));
+        yield return StartCoroutine(TextTyping("강한울 : 애들아 다 좋은 꿈 꿔!~"));
+        _GameEndingImage.sprite = _GameEndingSprite[0];
+        yield return StartCoroutine(TextTyping("*다음날*"));
+        _GameEndingImage.sprite = _GameStartSprite[6];
+        yield return StartCoroutine(TextTyping("정다봄 : 쿨쿨..."));
+        yield return StartCoroutine(TextTyping("쾅...쾅..."));
+        yield return StartCoroutine(TextTyping("김혜나 : 으으....아....아....."));
+        yield return StartCoroutine(TextTyping("정다봄 : 으..으음..."));
+        _GameEndingImage.sprite = _GameStartSprite[7];
+        yield return StartCoroutine(TextTyping("정다봄 : 으음...무..뭐지...?"));
+        yield return StartCoroutine(TextTyping("정다봄 : 무슨 소리야.."));
+        _GameEndingImage.sprite = _GameStartSprite[8];
+        yield return StartCoroutine(TextTyping("김혜나 : 미친친구:으아아아아아!!!!!!!!!"));
+        yield return StartCoroutine(TextTyping("쾅!!쾅!!"));
+        yield return StartCoroutine(TextTyping("쾅!!!"));
+        yield return StartCoroutine(TextTyping("정다봄 : 허...허헉..."));
+        _GameEndingImage.sprite = _GameEndingSprite[0];
+        yield return new WaitForSeconds(0.5f);
+        _GameEnding.SetActive(false);
+        player.gameEnding = false;
+    }
+
+
     IEnumerator GameEnding()
     {
+        endingCoroutine = true;
         _GameEnding.SetActive(true);
         _GameEndingImage.sprite = _GameEndingSprite[0];
         yield return StartCoroutine(TextTyping("..헉..헉헉..."));
@@ -162,7 +218,6 @@ public class UIManager : MonoBehaviourPunCallbacks
         yield return StartCoroutine(TextTyping("....."));
         yield return StartCoroutine(TextTyping("....."));
         yield return StartCoroutine(TextTyping("도착했다!"));
-        GameManager.Instance._NetworkManager.LeaveRoom();
         yield return new WaitForSeconds(1);
         QuitGame();
     }
@@ -181,10 +236,47 @@ public class UIManager : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1);
     }
 
-    [PunRPC]
-    public void UIManagerCoroutine()
+    public void UIManagerCoroutine(string _CoroutineName, Player player)
     {
-        StartCoroutine(GameEnding());
+        skipPlayerNum.SetActive(false);
+        skipPlayerNum_2.SetActive(false);
+        switch (_CoroutineName)
+        {
+            case "GameStart":
+                StartCoroutine(GameStart(player));
+                break;
+            case "GameEnding":
+                StartCoroutine(GameEnding());
+                break;
+            default
+                : break;
+        }
+    }
+
+    [PunRPC]
+    public void SkipScene()
+    {
+        skipPlayer++;
+
+        if(skipPlayer == 1)
+        {
+            skipPlayerNum.SetActive(true);
+        }
+        else if(skipPlayer == 2)
+        {
+            skipPlayerNum_2.SetActive(true);
+            StopCoroutine(GameStart(null));
+            StopCoroutine(GameEnding());
+            _GameEnding.SetActive(false);
+            if(endingCoroutine)
+            {
+                QuitGame();
+            }
+        }
+        else if(skipPlayer == 3)
+        {
+            skipPlayer = 0;
+        }
     }
 
     public void QuitGame()

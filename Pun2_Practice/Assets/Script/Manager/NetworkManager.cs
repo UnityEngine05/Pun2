@@ -26,9 +26,4 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         GameManager.Instance.SendUIManagerPlayersNum(PhotonNetwork.CurrentRoom.PlayerCount);
     }
-
-    public void LeaveRoom()
-    {
-        PhotonNetwork.LeaveRoom();
-    }
 }

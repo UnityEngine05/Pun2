@@ -269,6 +269,7 @@ MonoBehaviour:
   key_1: 97
   key_2: 115
   key_3: 100
+  key_4: 102
   moveX: 0
   moveY: 0
   moveSpeed: 4
@@ -280,10 +281,12 @@ MonoBehaviour:
   fixTimer: 0
   checkTimer: 0
   maxCoolTime: 0
+  skipTimer: 0
   foldOut: 1
   playerNoMove: 1
   fixOnOff: 0
   gameEnding: 0
+  skipPlayerBool: 0
   playerPos: {x: 0, y: 0, z: 0}
   playerSize: {x: 0, y: 0, z: 0}
   playerRot: {x: 0, y: 0, z: 0, w: 0}

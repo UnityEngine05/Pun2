@@ -52,6 +52,7 @@ MonoBehaviour:
   - test
   - HideObject
   - UIManagerCoroutine
+  - SkipScene
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
